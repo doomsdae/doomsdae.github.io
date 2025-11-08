@@ -55,22 +55,34 @@ if (-not $Script) {
 }
 
 # --- Ensure output dir exists ---
-New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+$null = New-Item -ItemType Directory -Force -Path $OutDir
 
 # --- Load .env into environment (so child process sees TMDB_API_KEY) ---
 if (Test-Path $EnvFile) {
-    Get-Content $EnvFile | ForEach-Object {
-        if ($_ -match '^\s*#' -or $_ -match '^\s*$') { return }
-        if ($_ -match '^([^=]+)=(.*)$') {
-            $varName = $matches[1].Trim()
-            [Environment]::SetEnvironmentVariable($varName, $matches[2], 'Process')
+    Get-Content -LiteralPath $EnvFile | ForEach-Object {
+        $line = $_.Trim()
+        if ($line -match '^(#|$)') { return }  # skip comments / blank
+
+        # allow "export KEY=VAL" or "KEY=VAL"
+        if ($line -match '^(?:export\s+)?([^=]+)=(.*)$') {
+            $key = $matches[1].Trim()
+            $val = $matches[2].Trim()
+
+            # strip surrounding single/double quotes if present
+            if ($val -match '^"(.*)"$' -or $val -match "^'(.*)'$") {
+                $val = $matches[1]
+            }
+
+            [Environment]::SetEnvironmentVariable($key, $val, 'Process')
         }
     }
 }
 
+# --- Require TMDB_API_KEY ---
 if (-not $env:TMDB_API_KEY -or [string]::IsNullOrWhiteSpace($env:TMDB_API_KEY)) {
-  throw "TMDB_API_KEY is not set. Add it to $EnvFile as: TMDB_API_KEY=YOUR_KEY_HERE"
+    throw ('TMDB_API_KEY is not set. Add it to {0} as: TMDB_API_KEY=YOUR_KEY_HERE' -f $EnvFile)
 }
+
 
 # --- Run the generator (CWD = OutDir). If your script ignores CWD, we post-move files. ---
 Push-Location $OutDir
