@@ -1,0 +1,11 @@
+# create (or append to) .gitignore
+@"
+# venv & caches
+.venv/
+__pycache__/
+*.pyc
+
+# local env & editor
+.env
+.vscode/
+"@ | Out-File -Encoding utf8 .gitignore
