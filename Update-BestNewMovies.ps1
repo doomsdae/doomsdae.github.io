@@ -63,7 +63,7 @@ if (Test-Path $EnvFile) {
         if ($_ -match '^\s*#' -or $_ -match '^\s*$') { return }
         if ($_ -match '^([^=]+)=(.*)$') {
             $varName = $matches[1].Trim()
-            Set-Item "env:$varName" $matches[2]
+            [Environment]::SetEnvironmentVariable($varName, $matches[2], 'Process')
         }
     }
 }
