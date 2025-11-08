@@ -1,0 +1,6 @@
+kivy
+kivymd
+python-dotenv
+requests
+buildozer
+python-dateutil
