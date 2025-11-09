@@ -43,7 +43,7 @@ body {
   background-image:
     radial-gradient(1200px 800px at 20% -10%, rgba(16,24,38,0.6) 0%, transparent 60%),
     radial-gradient(1000px 600px at 120% 10%, rgba(15,22,34,0.5) 0%, transparent 60%);
-  scroll-padding-top: 148px; /* sticky header + controls, adjusted for new nav row */
+  scroll-padding-top: 112px; /* sticky header + controls */
 }
 h1 { margin: 0 0 8px; color: var(--text); }
 h2 {
@@ -93,7 +93,7 @@ tbody tr:hover { background: color-mix(in oklab, var(--accent) 18%, transparent)
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 0 6px 0;
+  padding: 10px 0;
   margin-bottom: 10px;
 }
 .imdb-container {
@@ -130,39 +130,10 @@ tbody tr:hover { background: color-mix(in oklab, var(--accent) 18%, transparent)
 }
 .imdb-form button:hover { filter: brightness(0.95); }
 
-/* NEW: Site nav under the IMDb header row */
-.site-nav-wrap {
-  border-top: 1px solid var(--border);
-  margin-top: 8px;
-  padding-top: 8px;
-}
-.site-nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.site-nav a {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  padding: 6px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-  line-height: 1.2;
-}
-.site-nav a:hover {
-  border-color: var(--accent);
-  text-decoration: none;
-}
-.site-nav a[aria-current="page"] {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(96,165,250,0.18);
-}
-
 /* Floating controls */
 #controls {
   position: sticky;
-  top: 96px; /* moved down a bit to clear the new nav row */
+  top: 62px; /* below IMDb header */
   display: flex;
   gap: 8px;
   justify-content: space-between;
@@ -234,17 +205,6 @@ tbody tr:hover { background: color-mix(in oklab, var(--accent) 18%, transparent)
       />
       <button type="submit" title="Search IMDb">Search</button>
     </form>
-  </div>
-
-  <!-- NEW: site nav row -->
-  <div class="imdb-container site-nav-wrap" role="navigation" aria-label="Site">
-    <nav class="site-nav">
-      <a href="index.html">Home</a>
-      <!-- Live Nav Tab -->
-      <a href="live.html" class="hover:opacity-80">Live</a>
-      <!-- Add other pages as you create them -->
-      <!-- <a href="new-movies.html" aria-current="page">New Movies</a> -->
-    </nav>
   </div>
 </header>
 

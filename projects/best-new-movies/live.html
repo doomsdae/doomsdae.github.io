@@ -1,0 +1,465 @@
+<!doctype html>
+<html data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <title>Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #0f1720;
+    --muted: #94a3b8;
+    --text: #e5e7eb;
+    --text-dim: #cbd5e1;
+    --border: #1f2937;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --thead: #111827;
+    --row-alt: #0d141d;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7fafc;
+    --panel: #ffffff;
+    --muted: #475569;
+    --text: #0f172a;
+    --text-dim: #334155;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --thead: #f1f5f9;
+    --row-alt: #f8fafc;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 24px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+    background-image:
+      radial-gradient(1200px 800px at 20% -10%, rgba(16,24,38,0.6) 0%, transparent 60%),
+      radial-gradient(1000px 600px at 120% 10%, rgba(15,22,34,0.5) 0%, transparent 60%);
+    scroll-padding-top: 148px; /* sticky header + nav + controls */
+  }
+  h1 { margin: 0 0 8px; color: var(--text); }
+  .meta { color: var(--muted); margin-bottom: 16px; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  /* IMDb-style sticky header from your index */
+  .imdb-header {
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 0 6px 0;
+    margin-bottom: 10px;
+  }
+  .imdb-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .imdb-brand { color: var(--text); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .imdb-brand .dot { color: var(--muted); }
+  .imdb-form { display: flex; gap: 8px; flex: 1; justify-content: flex-end; }
+  .imdb-form input {
+    width: min(520px, 100%);
+    background: #161618;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 10px;
+    outline: none;
+  }
+  :root[data-theme="light"] .imdb-form input { background: #f8fafc; }
+  .imdb-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(96,165,250,0.18); }
+  .imdb-form button {
+    background: var(--accent);
+    color: #111;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .imdb-form button:hover { filter: brightness(0.95); }
+
+  /* Site nav under the header */
+  .site-nav-wrap {
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+  .site-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .site-nav a {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    line-height: 1.2;
+  }
+  .site-nav a:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  .site-nav a[aria-current="page"] {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(96,165,250,0.18);
+  }
+
+  /* Floating controls (theme toggle etc.) */
+  #controls {
+    position: sticky;
+    top: 96px; /* below the header & nav */
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    z-index: 9999;
+  }
+  .btn {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+  }
+  .btn:hover { border-color: var(--accent); }
+
+  /* Player card + elements styled like your tables/panels */
+  .card {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .video-shell {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #0a0f16;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .offline {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.9));
+    color: var(--text-dim);
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  #backToTop {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    display: none;
+    cursor: pointer;
+  }
+  #backToTop:hover { border-color: var(--accent); }
+
+  /* Helper panel link styling */
+  .helper-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .helper-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .helper-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(15,23,32,0.85), rgba(15,23,32,0.65));
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  :root[data-theme="light"] .helper-link {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(241,245,249,0.9));
+    color: var(--text);
+  }
+  .helper-link:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+    background: rgba(96,165,250,0.15);
+  }
+  .helper-link .icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  .helper-link:hover .icon { opacity: 1; }
+  .helper-link[aria-disabled="true"] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  </style>
+</head>
+<body>
+
+<header class="imdb-header" role="banner" aria-label="IMDb search header">
+  <div class="imdb-container">
+    <div class="imdb-brand">
+      <span><h1>Live</h1></span>
+    </div>
+
+    <!-- keep the same search experience -->
+    <form id="imdb-form" class="imdb-form" role="search" aria-label="Search IMDb">
+      <input
+        id="imdb-query"
+        type="search"
+        placeholder="Search IMDb (title, person, or tt/nm ID)…"
+        autocomplete="off"
+        aria-label="Search IMDb"
+      />
+      <button type="submit" title="Search IMDb">Search</button>
+    </form>
+  </div>
+
+  <div class="imdb-container site-nav-wrap" role="navigation" aria-label="Site">
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <!-- <a href="new-movies.html">New Movies</a> -->
+      <!-- Current page -->
+      <a href="live.html" aria-current="page">Live</a>
+    </nav>
+  </div>
+</header>
+
+<main class="imdb-container" style="flex-direction:column;align-items:stretch;">
+  <!-- <div class="meta">Stream from OBS → RTMP → HLS (or use YouTube Live). This page matches your Movie Finder theme.</div> -->
+
+  <!-- Player -->
+  <section class="card" aria-label="Live player">
+    <div class="video-shell" id="playerShell">
+      <!-- YouTube (when ?yt=) -->
+  <iframe id="ytFrame" class="w-full h-full" style="display:none;border:0;width:100%;height:100%;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="YouTube live player"></iframe>
+
+      <!-- HLS/MP4 (when ?src=) -->
+      <video id="liveVideo" style="display:none;width:100%;height:100%;" controls playsinline muted></video>
+
+      <div id="offline" class="offline">
+        <div>
+          <div style="font-weight:600;font-size:1.25rem;margin-bottom:.25rem;">Stream is offline</div>
+          <div id="offlineMessage">We’ll be live soon. Check back in a bit.</div>
+        </div>
+      </div>
+    </div>
+
+<!-- Help Panel - Use 'hidden' if you’re toggling this with JS; otherwise remove it -->
+
+  <aside id="helper"
+         class="hidden mt-3 rounded-2xl border border-white/10 bg-black/60 backdrop-blur p-4"
+         role="complementary"
+         aria-labelledby="help-panel-title">
+
+      <div class="helper-row" role="group" aria-labelledby="help-panel-title">
+        <span class="helper-label">Help:</span>
+        <a id="tryLink" href="https://github.com/doomsdae/doomsdae.github.io" title="doomsdae" class="helper-link">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor" d="M12 .5A12 12 0 0 0 0 12.6c0 5.3 3.4 9.8 8.2 11.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4c-.5-1.2-1.2-1.6-1.2-1.6c-1-.7.1-.7.1-.7c1.1.1 1.7 1.2 1.7 1.2c1 .1.8-.8 1.9-1.2c-2.6-.3-5.2-1.3-5.2-5.9c0-1.3.5-2.4 1.2-3.2c-.1-.3-.5-1.6.1-3.2c0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2c.6 1.6.2 2.9.1 3.2c.8.8 1.2 1.9 1.2 3.2c0 4.6-2.7 5.6-5.3 5.9c.9.7 1.9 2.1 1.9 4.3v3.3c0 .3.2.7.8.6A12.1 12.1 0 0 0 24 12.6A12 12 0 0 0 12 .5Z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+
+        <!-- <a href="?src=/live/stream.m3u8" class="helper-link">Inventory</a>
+        
+        <a href="?src=/live/stream.m3u8" class="helper-link">Useful Links</a>
+
+        <a href="?src=/live/stream.m3u8" class="helper-link">Report an issue</a> -->
+
+        <a href="#" aria-disabled="true" tabindex="-1" class="helper-link">Documentation (coming soon)</a>
+
+        <a href="#" aria-disabled="true" tabindex="-1" class="helper-link">Feature requests  (coming soon)</a>
+
+        <a href="#" aria-disabled="true" tabindex="-1" class="helper-link">Report an issue (coming soon)</a>
+
+        
+      </div>
+  </aside>
+</div>
+  </section>
+
+<button id="backToTop" title="Back to top">↑</button>
+
+<!-- hls.js for non-Safari browsers -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+(function() {
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const back = document.getElementById('backToTop');
+
+  // URL param override (?theme=light or ?theme=dark)
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const saved = localStorage.getItem('theme');
+  let theme = (urlTheme === 'light' || urlTheme === 'dark') ? urlTheme
+            : (saved === 'light' || saved === 'dark') ? saved
+            : 'dark';
+
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    if (btn) {
+      btn.textContent = (t === 'dark') ? '🌙 Dark' : '☀️ Light';
+    }
+    let meta = document.querySelector('meta[name="color-scheme"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'color-scheme');
+      document.head.appendChild(meta);
+    }
+  meta.setAttribute('content', t === 'dark' ? 'dark light' : 'light dark');
+  }
+  applyTheme(theme);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      theme = (theme === 'dark') ? 'light' : 'dark';
+      localStorage.setItem('theme', theme);
+      applyTheme(theme);
+    });
+  }
+
+  // Back to top
+  window.addEventListener('scroll', () => {
+    back.style.display = (window.scrollY > 200) ? 'block' : 'none';
+  });
+  back.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // IMDb search + "/" shortcut
+  const form = document.getElementById('imdb-form');
+  const input = document.getElementById('imdb-query');
+  window.addEventListener('keydown', (e) => {
+    const a = document.activeElement;
+    const typing = a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable);
+    if (!typing && e.key === '/') {
+      e.preventDefault();
+      input && input.focus();
+    }
+  });
+  form && form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    var q = (input && input.value ? input.value : '').trim();
+    if (!q) return;
+    if (/^tt\d{5,10}$/i.test(q)) { window.open('https://www.imdb.com/title/' + q + '/', '_blank', 'noopener'); return; }
+    if (/^nm\d{5,10}$/i.test(q)) { window.open('https://www.imdb.com/name/' + q + '/', '_blank', 'noopener'); return; }
+    var url = 'https://www.imdb.com/find/?q=' + encodeURIComponent(q) + '&s=tt';
+    window.open(url, '_blank', 'noopener');
+  });
+})();
+</script>
+
+<script>
+// Live player logic matching your theme
+(function() {
+  const params = new URLSearchParams(location.search);
+  const yt = params.get("yt") || params.get("youtube");
+  const src = params.get("src") || "";
+
+  const ytFrame = document.getElementById("ytFrame");
+  const videoEl = document.getElementById("liveVideo");
+  const helper = document.getElementById("helper");
+  const offline = document.getElementById("offline");
+  const offlineMessage = document.getElementById("offlineMessage");
+
+  function showOffline(msg) {
+    if (msg && offlineMessage) {
+      offlineMessage.textContent = msg;
+    }
+    offline.style.display = "flex";
+  }
+
+  (async function init() {
+    if (yt) {
+      helper.style.display = "none";
+      videoEl.style.display = "none";
+      ytFrame.style.display = "block";
+      ytFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(yt)}?autoplay=1&mute=1&playsinline=1`;
+      return;
+    }
+
+    if (src) {
+      helper.style.display = "none";
+      ytFrame.style.display = "none";
+      videoEl.style.display = "block";
+
+      try {
+        if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = src;
+          await videoEl.play().catch(()=>{});
+        } else if (window.Hls && Hls.isSupported()) {
+          const hls = new Hls({lowLatencyMode: true});
+          hls.loadSource(src);
+          hls.attachMedia(videoEl);
+          hls.on(Hls.Events.ERROR, function(event, data) {
+            if (data && data.fatal) showOffline("Stream is offline or unavailable.");
+          });
+          videoEl.addEventListener('error', () => showOffline("Stream error."));
+          await videoEl.play().catch(()=>{});
+        } else {
+          videoEl.src = src; // progressive fallback (.mp4)
+          await videoEl.play().catch(()=>{});
+        }
+      } catch (e) {
+        console.error(e);
+        showOffline("Stream is offline or blocked by the browser.");
+      }
+      return;
+    }
+
+    // No params
+    helper.style.display = "block";
+    showOffline("Set a provider via URL parameters.");
+  })();
+})();
+</script>
+
+</body>
+</html>
