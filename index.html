@@ -61,6 +61,43 @@
       padding:10px 25px;border-radius:10px;transition:.3s;font-weight:bold;letter-spacing:.05em;
     }
     .socials a:hover{background:#00ff80;color:#000;box-shadow:0 0 25px #00ff80;}
+
+    .links {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.links h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: #00ff80;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px #00ff80;
+}
+
+.links a {
+  text-decoration: none;
+  color: #00ff80;
+  border: 1px solid #00ff80;
+  padding: 10px 30px;
+  border-radius: 10px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.links a:hover {
+  background: #00ff80;
+  color: #000;
+  box-shadow: 0 0 25px #00ff80;
+  transform: scale(1.05);
+}
+
     /* #soundToggle{
       position:fixed;bottom:20px;right:20px;background:none;border:1px solid #00ff80;color:#00ff80;
       font-size:1.2rem;padding:8px 12px;border-radius:8px;cursor:pointer;z-index:5;transition:.3s;
@@ -72,20 +109,29 @@
 <body>
   <canvas id="matrix"></canvas>
   <canvas id="fog"></canvas>
-
-  <div id="intro"><div id="logo">DOOMSD4Y</div></div>
-
-  <div id="main">
-    <h1>COMING SOON</h1>
-    <p>Something powerful is awakening...</p>
-    <div class="socials">
-      <a href="https://github.com/doomsdae" target="_blank">GitHub</a>
-      <a href="mailto:contact@doomsd4y.com">Email</a>
-    </div>
+  <div id="intro"><div id="logo">doomsday</div></div>
+<div id="main">
+  <h1>COMING SOON</h1>
+  <h3>Something powerful is awakening...</h3>
+  <div class="links">
+    <h2>Explore More</h2>
+    <a href="https://www.doomsd4y.com/american-skin-art/" target="_blank">
+    American Skin Art
+    </a>
+    <a href="https://www.doomsd4y.com/projects/best-new-movies/" target="_blank">
+    Best New Movies
+    </a>
+  </div>
+  <div class="socials">
+    <a href="https://github.com/doomsdae" target="_blank">GitHub</a>
+    <a href="mailto:contact@doomsd4y.com">Email</a>
   </div>
 
+</div>
+
+<!-- 
   <button id="soundToggle">🔇</button>
-  <audio id="ambient" src="https://cdn.pixabay.com/audio/2022/07/04/audio_6f5c2f9f6d.mp3" loop></audio>
+  <audio id="ambient" src="https://cdn.pixabay.com/audio/2022/07/04/audio_6f5c2f9f6d.mp3" loop></audio> -->
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
