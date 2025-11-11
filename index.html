@@ -4,146 +4,76 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>doomsday</title>
-
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-    }
+    * {margin:0;padding:0;box-sizing:border-box;}
+    html,body {height:100%;overflow:hidden;background:#000;color:#fff;font-family:'Rajdhani',sans-serif;}
 
-    /* Matrix canvas */
     canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -2;
-      background: #000;
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      display:block;pointer-events:none;
     }
 
-    /* Intro */
+    #matrix { z-index: 0; }
+    #fog { z-index: 1; opacity: 0.3; mix-blend-mode: lighten; }
+    #main { z-index: 2; position: relative; }
+
+
     #intro {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      animation: fadeOut 2s ease forwards;
-      animation-delay: 4s;
-      z-index: 10;
+      position:fixed;inset:0;background:#000;
+      display:flex;justify-content:center;align-items:center;flex-direction:column;
+      animation:fadeOut 2s ease forwards;animation-delay:4s;z-index:10;
     }
-
     #logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 5rem;
-      color: #00ff80;
-      text-shadow: 0 0 20px #00ff80, 0 0 40px #00ff80;
-      opacity: 0;
-      animation: glitchIn 3s ease forwards;
+      font-family:'Orbitron',sans-serif;font-size:5rem;
+      color:#00ff80;text-shadow:0 0 20px #00ff80,0 0 40px #00ff80;
+      opacity:0;animation:glitchIn 3s ease forwards;
     }
-
     @keyframes glitchIn {
-      0% { opacity: 0; transform: scale(0.9) rotateX(45deg); filter: blur(10px);}
-      20% { opacity: 1; transform: scale(1) rotateX(0deg); filter: blur(0);}
-      40% { text-shadow: 0 0 15px #00ff80, 2px 2px #fff; }
-      60% { text-shadow: 0 0 25px #00ff80, -2px -2px #fff; }
-      100% { text-shadow: 0 0 30px #00ff80; }
+      0%{opacity:0;transform:scale(0.9) rotateX(45deg);filter:blur(10px);}
+      20%{opacity:1;transform:scale(1) rotateX(0);filter:blur(0);}
+      40%{text-shadow:0 0 15px #00ff80,2px 2px #fff;}
+      60%{text-shadow:0 0 25px #00ff80,-2px -2px #fff;}
+      100%{text-shadow:0 0 30px #00ff80;}
     }
+    @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
 
-    @keyframes fadeOut {
-      to { opacity: 0; visibility: hidden; }
-    }
-
-    /* Main landing */
     #main {
-      position: relative;
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      animation: fadeIn 2s ease forwards;
-      animation-delay: 5s;
-      text-align: center;
+      position:relative;width:100%;height:100%;z-index:2;
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      opacity:0;animation:fadeIn 2s ease forwards;animation-delay:5s;text-align:center;
     }
-
-    @keyframes fadeIn { to { opacity: 1; } }
-
+    @keyframes fadeIn {to{opacity:1;}}
     h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 4rem;
-      letter-spacing: 0.15em;
-      color: #00ff80;
-      text-shadow: 0 0 10px #00ff80, 0 0 30px #00ff80;
-      margin-bottom: 10px;
-      animation: flicker 3s infinite;
+      font-family:'Orbitron',sans-serif;font-size:4rem;letter-spacing:0.15em;
+      color:#00ff80;text-shadow:0 0 10px #00ff80,0 0 30px #00ff80;margin-bottom:10px;
+      animation:flicker 3s infinite;
     }
-
     @keyframes flicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-      20%, 24%, 55% { opacity: 0.3; }
+      0%,18%,22%,25%,53%,57%,100%{opacity:1;}
+      20%,24%,55%{opacity:.3;}
     }
-
-    p {
-      font-size: 1.2rem;
-      color: #aaa;
-      margin-bottom: 20px;
+    p{font-size:1.2rem;color:#aaa;margin-bottom:20px;}
+    .socials{margin-top:30px;display:flex;gap:20px;}
+    .socials a{
+      text-decoration:none;color:#00ff80;border:1px solid #00ff80;
+      padding:10px 25px;border-radius:10px;transition:.3s;font-weight:bold;letter-spacing:.05em;
     }
-
-    .socials {
-      margin-top: 30px;
-      display: flex;
-      gap: 20px;
-    }
-
-    .socials a {
-      text-decoration: none;
-      color: #00ff80;
-      border: 1px solid #00ff80;
-      padding: 10px 25px;
-      border-radius: 10px;
-      transition: 0.3s;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-    }
-
-    .socials a:hover {
-      background: #00ff80;
-      color: #000;
-      box-shadow: 0 0 25px #00ff80;
-    }
-
-    #soundToggle {
-      position: fixed;
-      bottom: 20px; right: 20px;
-      background: none;
-      border: 1px solid #00ff80;
-      color: #00ff80;
-      font-size: 1.2rem;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 5;
-      transition: 0.3s;
-    }
-
-    #soundToggle:hover { background: #00ff80; color: #000; }
+    .socials a:hover{background:#00ff80;color:#000;box-shadow:0 0 25px #00ff80;}
+    /* #soundToggle{
+      position:fixed;bottom:20px;right:20px;background:none;border:1px solid #00ff80;color:#00ff80;
+      font-size:1.2rem;padding:8px 12px;border-radius:8px;cursor:pointer;z-index:5;transition:.3s;
+    } */
+    /* #soundToggle:hover{background:#00ff80;color:#000;} */
   </style>
 </head>
 
 <body>
   <canvas id="matrix"></canvas>
+  <canvas id="fog"></canvas>
 
-  <div id="intro">
-    <div id="logo">DOOMSD4Y</div>
-  </div>
+  <div id="intro"><div id="logo">DOOMSD4Y</div></div>
 
   <div id="main">
     <h1>COMING SOON</h1>
@@ -158,68 +88,85 @@
   <audio id="ambient" src="https://cdn.pixabay.com/audio/2022/07/04/audio_6f5c2f9f6d.mp3" loop></audio>
 
   <script>
-    // Matrix effect
+  document.addEventListener("DOMContentLoaded", () => {
+    // --- MATRIX EFFECT ---
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
-
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-
-    const katakana = "アカサタナハマヤラワ0123456789";
-    const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const nums = "0123456789";
-    const alphabet = katakana + latin + nums;
-
+    const chars = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const fontSize = 16;
-    const columns = canvas.width / fontSize;
+    let columns = 0;
+    let drops = [];
 
-    const rainDrops = [];
-
-    for (let x = 0; x < columns; x++) {
-      rainDrops[x] = 1;
+    function resizeMatrix() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
     }
+    resizeMatrix();
+    window.addEventListener("resize", resizeMatrix);
 
-    const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
       ctx.fillStyle = "#00ff80";
       ctx.font = fontSize + "px monospace";
 
-      for (let i = 0; i < rainDrops.length; i++) {
-        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
-        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          rainDrops[i] = 0;
-        }
-        rainDrops[i]++;
+      for(let i=0;i<drops.length;i++){
+        const text = chars.charAt(Math.floor(Math.random()*chars.length));
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){ drops[i]=0; }
+        drops[i]++;
       }
-    };
+      requestAnimationFrame(drawMatrix);
+    }
+    requestAnimationFrame(drawMatrix);
 
-    setInterval(draw, 33);
+    // --- FOG EFFECT ---
+    const fogCanvas = document.getElementById("fog");
+    const fogCtx = fogCanvas.getContext("2d");
+    function resizeFog() {
+      fogCanvas.width = window.innerWidth;
+      fogCanvas.height = window.innerHeight;
+    }
+    resizeFog();
+    window.addEventListener("resize", resizeFog);
 
-    window.addEventListener("resize", () => {
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
-    });
+    const fogImage = new Image();
+    fogImage.src = "https://cdn.pixabay.com/photo/2017/07/28/00/47/fog-2545727_1280.png";
+    let fogX = 0;
+    function drawFog() {
+      fogCtx.clearRect(0,0,fogCanvas.width,fogCanvas.height);
+      fogX -= 0.3;
+      if(fogX <= -fogCanvas.width) fogX = 0;
+      fogCtx.globalAlpha = 0.25;
+      fogCtx.drawImage(fogImage, fogX, 0, fogCanvas.width, fogCanvas.height);
+      fogCtx.drawImage(fogImage, fogX + fogCanvas.width, 0, fogCanvas.width, fogCanvas.height);
+      requestAnimationFrame(drawFog);
+    }
+    fogImage.onload = drawFog;
 
-    // Sound toggle
-    const btn = document.getElementById("soundToggle");
-    const audio = document.getElementById("ambient");
-    let playing = false;
-    btn.addEventListener("click", () => {
-      if (!playing) {
-        audio.play();
-        btn.textContent = "🔊";
-        playing = true;
-      } else {
-        audio.pause();
-        btn.textContent = "🔇";
-        playing = false;
-      }
-    });
+    // --- SOUND TOGGLE ---
+// const btn = document.getElementById("soundToggle");
+// const audio = document.getElementById("ambient");
+// let playing = false;
+// btn.addEventListener("click", () => {
+//   if (!playing) {
+//     audio.volume = 0.3;
+//     const playPromise = audio.play();
+//     if (playPromise !== undefined) {
+//       playPromise.then(() => {
+//         btn.textContent = "🔊";
+//         playing = true;
+//       }).catch(err => console.log("Play blocked:", err));
+//     }
+//   } else {
+//     audio.pause();
+//     btn.textContent = "🔇";
+//     playing = false;
+//   }
+// });
+  });
   </script>
 </body>
 </html>
-
